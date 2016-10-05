@@ -1,6 +1,8 @@
 #!/bin/bash
 
 function printUsageAndExit {
+  echo "Retrieves a list of images in a Docker registry's repository."
+  echo
   echo "Usage: $0 [-f|--full] [-l|--list] REPOSITORY" >&2
   exit 1
 }
