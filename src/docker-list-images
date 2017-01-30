@@ -40,7 +40,7 @@ repository=${1}
 registry=$(echo ${repository} | cut -d'/' -f1 )
 name=$(echo ${repository} | cut -d'/' -f2-)
 
-for tag in $(curl -s -S http://${registry}/v2/${name}/tags/list | jq -r '.tags | join("\n")' | sort); do
+for tag in $(curl -s -S https://${registry}/v2/${name}/tags/list | jq -r '.tags | join("\n")' | sort); do
   if [ "${printFullRepository}" = "true" ]; then
     echo ${repository}:${tag}
   else
