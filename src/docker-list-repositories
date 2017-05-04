@@ -1,0 +1,51 @@
+#!/bin/bash
+
+function printUsageAndExit {
+  echo "Retrieves a list of repositories in a Docker registry."
+  echo
+  echo "Usage: $0 [-f|--full] [-l|--list] REGISTRY" >&2
+  exit 1
+}
+
+list="false"
+printFullRepository="false"
+while [[ $# -gt 0 ]]
+do
+  argument="$1"
+  case ${argument} in
+    -f|--full)
+      printFullRepository="true"
+      shift
+      ;;
+    -l|--list)
+      list="true"
+      shift
+      ;;
+    -*)
+      echo "Unknown argument ${argument}" >&2
+      printUsageAndExit
+      ;;
+    *)
+      # Not an option, stop processing options
+      break
+      ;;
+  esac
+done
+
+if [ $# -ne 1 ]; then
+  printUsageAndExit
+fi
+
+registry=${1}
+
+for repository in $(curl -s -S https://${registry}/v2/_catalog | jq -r '.repositories | join("\n")' | sort); do
+  if [ "${printFullRepository}" = "true" ]; then
+    echo ${registry}/${repository}
+  else
+    echo ${repository}
+  fi
+done | if [ "${list}" = "false" ]; then
+  column
+else
+  cat
+fi
